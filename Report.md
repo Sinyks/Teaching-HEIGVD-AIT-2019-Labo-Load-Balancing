@@ -8,19 +8,21 @@ Alban Favre
 Moïn Danai
 ```
 
-## Introduction
+### Introduction
 
-## Tâche 1(tout le monde)
+Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balancer`` HAproxy. Ce rapport découpe les livrables dans les plusieurs tâches.
 
-## Tâche 2(Sacha)
+### Tâche 1(tout le monde)
 
-## Tâche 3(Moïn)
+### Tâche 2(Sacha)
 
-## Tâche 4(Alban)
+### Tâche 3(Moïn)
 
-## Tâche 5(tout le monde)
+### Tâche 4(Alban)
 
-## Conclusion
+### Tâche 5(tout le monde)
+
+### Conclusion
 
 ## Annexes
 
