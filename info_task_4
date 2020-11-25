@@ -1,0 +1,5 @@
+s1 ip: 192.168.42.11
+s2 ip: 192.168.42.22
+
+curl -H "Content-Type: application/json" -X POST -d '{"delay": 0}' http://192.168.42.11:3000/delay
+curl -H "Content-Type: application/json" -X POST -d '{"delay": 0}' http://192.168.42.22:3000/delay
