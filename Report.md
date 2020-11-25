@@ -19,6 +19,10 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
     complement your explanations. We expect that you take a deeper a
     look at session management.
 
+**Réponse**
+
+HAProxy fonctionne avec des *frontends* et *backends*. L
+
 2. Explain what should be the correct behavior of the load balancer for
     session management.
 
@@ -26,10 +30,18 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
     requests the URL for the first time and then refreshes the page. We
     want to see what is happening with the cookie. We want to see the
     sequence of messages exchanged (1) between the browser and HAProxy
-    and (2) between HAProxy and the nodes S1 and S2. Here is an example:
+    and (2) between HAProxy and the nodes S1 and S2.
 
+**Réponse**
+
+On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.
+
+![](assets/img/graph-req1.jpg)
 
 4. Provide a screenshot of the summary report from JMeter.
+
+![](captures/summary_report.png)
+
 
 5. Run the following command:
 
@@ -41,6 +53,17 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
   is happening when only one node remains active. Provide another
   sequence diagram using the same model as the previous one.
 
+![](captures/summary_report_s2.png)
+
+We can see HAProxy spitting some warnings:
+
+```
+ha         | [WARNING] 329/152730 (10) : Server nodes/s1 is DOWN, reason: Layer4 timeout, check duration: 2002ms. 1 active and 0 backup servers left. 0 sessions active, 0 requeued, 0 remaining in queue.
+```
+
+Indeed, HAProxy timed out trying to reach `/` on s1 so it skipped marked it DOWN and skipped it for future requests.
+
+![](assets/img/graph-req2.jpg)
 
 ### Tâche 2(Sacha)
 
