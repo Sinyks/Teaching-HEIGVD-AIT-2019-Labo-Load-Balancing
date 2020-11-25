@@ -71,9 +71,13 @@ Indeed, HAProxy timed out trying to reach `/` on s1 so it skipped marked it DOWN
 
   * Choose one of the both stickiness approach for the next tasks.
 
-  ![](captures/DiagrammFluxQ2.2.png)
+  **Avec le SERVERID**
+  ![](assets/img/DiagrammFluxQ2.2.png)
 
-**Il est recommandé d'utilisé le cookie SERVERID, comme il sont délivré par le load balancer il seront plus fiable.**
+  **Avec le NODESESSID**
+  ![](assets/img/DiagrammFluxQ2.2-2.png)
+
+**Il est recommandé d'utilisé le cookie SERVERID, comme il sont délivré par le load balancer il seront plus fiable. Il n'est pas garantit que les cookies délivré par les applications soit distinct**
 
 2. Provide the modified `haproxy.cfg` file with a short explanation of the modifications you did to enable sticky session management.
 
@@ -91,6 +95,33 @@ backend node
 **Le tout en redémarrant le load balancer**
 
 3. Explain what is the behavior when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.
+
+Lorsque nous faisons une requête et plusieurs ``refresh`` nous observons que le load Balancer nous renvoie sur la même app.
+
+capture wireshark
+```
+Hypertext Transfer Protocol
+    HTTP/1.1 200 OK\r\n
+    x-powered-by: Express\r\n
+    x-backend-ip: 192.168.42.11\r\n
+    content-type: application/json; charset=utf-8\r\n
+    content-length: 129\r\n
+        [Content length: 129]
+    etag: W/"81-VrGks1g0NUpZwi+ckNKdYx7w5t0"\r\n
+    set-cookie: NODESESSID=s%3Ad83uu7wWdkEIyVFM0rx_wqNuyXvmoB8R.myRuFLo3DjR2ZBQC9GEL3GAVIvd4kKFce2TS7zGNIw0; Path=/; HttpOnly\r\n
+    vary: Accept-Encoding\r\n
+    date: Wed, 25 Nov 2020 15:18:29 GMT\r\n
+    keep-alive: timeout=5\r\n
+    set-cookie: SERVERID=s1; path=/\r\n
+    cache-control: private\r\n
+    \r\n
+    [HTTP response 1/1]
+    [Time since request: 0.005106200 seconds]
+    [Request in frame: 39]
+    [Request URI: http://192.168.42.42/]
+    File Data: 129 bytes
+
+```
 
 4. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2. We also want to see what is happening when a second browser is used.
 
