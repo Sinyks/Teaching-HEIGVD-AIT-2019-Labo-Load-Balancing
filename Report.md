@@ -71,7 +71,24 @@ Indeed, HAProxy timed out trying to reach `/` on s1 so it skipped marked it DOWN
 
   * Choose one of the both stickiness approach for the next tasks.
 
+  ![](captures/DiagrammFluxQ2.2.png)
+
+**Il est recommandé d'utilisé le cookie SERVERID, comme il sont délivré par le load balancer il seront plus fiable.**
+
 2. Provide the modified `haproxy.cfg` file with a short explanation of the modifications you did to enable sticky session management.
+
+**Pour utiliser le NODESESSID ou le SERVERID qui nous est donnée par l'application il convient d'ajouter ceci à la configuration**
+
+```
+backend node
+
+  cookie {NODESESSID | SERVERID} insert indirect nocache
+  server s1 ${WEBAPP_1_IP}:3000 check cookie s1
+  server s2 ${WEBAPP_2_IP}:3000 check cookie s2
+
+```
+
+**Le tout en redémarrant le load balancer**
 
 3. Explain what is the behavior when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.
 
