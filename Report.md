@@ -96,9 +96,10 @@ backend node
 
 3. Explain what is the behavior when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.
 
-Lorsque nous faisons une requête et plusieurs ``refresh`` nous observons que le load Balancer nous renvoie sur la même app.
+**Lorsque nous faisons une requête et plusieurs ``refresh`` nous observons que le load Balancer nous renvoie sur la même app.**
 
-capture wireshark
+**Capture wireshark**
+
 ```
 Hypertext Transfer Protocol
     HTTP/1.1 200 OK\r\n
@@ -108,11 +109,14 @@ Hypertext Transfer Protocol
     content-length: 129\r\n
         [Content length: 129]
     etag: W/"81-VrGks1g0NUpZwi+ckNKdYx7w5t0"\r\n
+    # SET du SERVERID
     set-cookie: NODESESSID=s%3Ad83uu7wWdkEIyVFM0rx_wqNuyXvmoB8R.myRuFLo3DjR2ZBQC9GEL3GAVIvd4kKFce2TS7zGNIw0; Path=/; HttpOnly\r\n
     vary: Accept-Encoding\r\n
     date: Wed, 25 Nov 2020 15:18:29 GMT\r\n
     keep-alive: timeout=5\r\n
+    # préparation du SERVERID #########
     set-cookie: SERVERID=s1; path=/\r\n
+    ###################################
     cache-control: private\r\n
     \r\n
     [HTTP response 1/1]
@@ -120,12 +124,16 @@ Hypertext Transfer Protocol
     [Request in frame: 39]
     [Request URI: http://192.168.42.42/]
     File Data: 129 bytes
-
 ```
 
 4. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2. We also want to see what is happening when a second browser is used.
 
+![](./captures/diagramme_stickysession.png)
+
 5. Provide a screenshot of JMeter\'s summary report. Is there a difference with this run and the run of Task 1?
+
+**En observant la capture des requêtes sur Jmeter On remarque que toutes les requêtes ont été délivré sur le même serveur**
+![](./captures/stickysession_jmeter.png)
 
   * Clear the results in JMeter.
 
@@ -134,6 +142,10 @@ Hypertext Transfer Protocol
   * Go in `Thread Group` and update the `Number of threads`. Set the value to 2.
 
 7. Provide a screenshot of JMeter\'s summary report. Give a short explanation of what the load balancer is doing.
+
+**Le test JMeter ci-dessous va effectuer les requêtes sur 2 threads(users), on va donc observer que pour chaque utilisateur les session vont se répartir entre les serveur, 1000 sur s1 et 1000 sur s2**
+
+![](captures/sticky_session_jmeter2thread.png)
 
 ### Tâche 3(Moïn)
 
