@@ -19,12 +19,16 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
     complement your explanations. We expect that you take a deeper a
     look at session management.
 
-**Réponse**
+  **Réponse:**
 
-HAProxy fonctionne avec des *frontends* et *backends*. L
+  **HAProxy fonctionne avec des *frontends* et *backends*.**
 
 2. Explain what should be the correct behavior of the load balancer for
     session management.
+
+    **Réponse:**
+
+    **Pour une bonne gestion des sessions l'on s'attend à ce le load Balancer route les requêtes aux serveur en fonction d'un cookie de sessions**
 
 3. Provide a sequence diagram to explain what is happening when one
     requests the URL for the first time and then refreshes the page. We
@@ -32,11 +36,11 @@ HAProxy fonctionne avec des *frontends* et *backends*. L
     sequence of messages exchanged (1) between the browser and HAProxy
     and (2) between HAProxy and the nodes S1 and S2.
 
-**Réponse**
+    **Réponse**
 
-On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.
+  **On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.**
 
-![](assets/img/graph-req1.jpg)
+  ![](assets/img/graph-req1.jpg)
 
 4. Provide a screenshot of the summary report from JMeter.
 
@@ -55,13 +59,13 @@ On the flowchart below, we can see how HAProxy injects two headers that pertain 
 
 ![](captures/summary_report_s2.png)
 
-We can see HAProxy spitting some warnings:
+**We can see HAProxy spitting some warnings:**
 
 ```
 ha         | [WARNING] 329/152730 (10) : Server nodes/s1 is DOWN, reason: Layer4 timeout, check duration: 2002ms. 1 active and 0 backup servers left. 0 sessions active, 0 requeued, 0 remaining in queue.
 ```
 
-Indeed, HAProxy timed out trying to reach `/` on s1 so it skipped marked it DOWN and skipped it for future requests.
+**Indeed, HAProxy timed out trying to reach `/` on s1 so it skipped marked it DOWN and skipped it for future requests.**
 
 ![](assets/img/graph-req2.jpg)
 
@@ -83,6 +87,7 @@ Indeed, HAProxy timed out trying to reach `/` on s1 so it skipped marked it DOWN
 
 **Pour utiliser le NODESESSID ou le SERVERID qui nous est donnée par l'application il convient d'ajouter ceci à la configuration**
 
+
 ```
 backend node
 
@@ -94,9 +99,11 @@ backend node
 
 **Le tout en redémarrant le load balancer**
 
+**NB: Nous utiliserons le SERVERID pour la suite des exemples**
+
 3. Explain what is the behavior when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.
 
-**Lorsque nous faisons une requête et plusieurs ``refresh`` nous observons que le load Balancer nous renvoie sur la même app.**
+**Lorsque nous faisons une requête et plusieurs ``refresh`` nous observons que le load Balancer nous renvoie sur le même serveur.**
 
 **Capture wireshark**
 
@@ -109,12 +116,13 @@ Hypertext Transfer Protocol
     content-length: 129\r\n
         [Content length: 129]
     etag: W/"81-VrGks1g0NUpZwi+ckNKdYx7w5t0"\r\n
-    # SET du SERVERID
+    # Préparation du NODESESSID ######
     set-cookie: NODESESSID=s%3Ad83uu7wWdkEIyVFM0rx_wqNuyXvmoB8R.myRuFLo3DjR2ZBQC9GEL3GAVIvd4kKFce2TS7zGNIw0; Path=/; HttpOnly\r\n
+    ##################################
     vary: Accept-Encoding\r\n
     date: Wed, 25 Nov 2020 15:18:29 GMT\r\n
     keep-alive: timeout=5\r\n
-    # préparation du SERVERID #########
+    # Préparation du SERVERID #########
     set-cookie: SERVERID=s1; path=/\r\n
     ###################################
     cache-control: private\r\n
@@ -128,12 +136,12 @@ Hypertext Transfer Protocol
 
 4. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2. We also want to see what is happening when a second browser is used.
 
-![](./captures/diagramme_stickysession.png)
+![](./assets/img/diagramme_stickysession.png)
 
 5. Provide a screenshot of JMeter\'s summary report. Is there a difference with this run and the run of Task 1?
 
 **En observant la capture des requêtes sur Jmeter On remarque que toutes les requêtes ont été délivré sur le même serveur**
-![](./captures/stickysession_jmeter.png)
+![](./captures/2.5.png)
 
   * Clear the results in JMeter.
 
@@ -145,7 +153,7 @@ Hypertext Transfer Protocol
 
 **Le test JMeter ci-dessous va effectuer les requêtes sur 2 threads(users), on va donc observer que pour chaque utilisateur les session vont se répartir entre les serveur, 1000 sur s1 et 1000 sur s2**
 
-![](captures/sticky_session_jmeter2thread.png)
+![](./captures/2.7.png)
 
 ### Tâche 3(Moïn)
 
