@@ -178,28 +178,59 @@ Hypertext Transfer Protocol
 
 1. Be sure the delay is of 0 milliseconds is set on `s1`. Do a run to have base data to compare with the next experiments.
 
+**Note: j'utilise 2 threads et 1000 loops et j'ai set le delay de S2 a 0**
+
 ![4.1](./captures/4-1.png)
 
 2. Set a delay of 250 milliseconds on `s1`. Relaunch a run with the JMeter script and explain what it is happening?
 
-**TODO**
+**Ça prend beaucoup plus de temps a faire le test, du aux 2 users et qu'il faut attendre 250 ms sur S1, on peut le voir dans la colonne Throughput: S2 a une valeur très proche de celle de la base, alors que S1 atteint juste 3.3 par seconde.**
 
 ![4.2](./captures/4-2.png)
 
 3. Set a delay of 2500 milliseconds on `s1`. Same than previous step.
 
-**On peut voir que le S1 n'est même pas affiché**
+**On peut voir que le S1 n'est même pas affiché, car jamais atteint.**
 
 ![4.3](./captures/4-3.png)
 
 4. In the two previous steps, are there any error? Why?
 
-**dans les logs docker compose on peut voir ce message dans la ligne ha: "... Server nodes/s1 is DOWN ... Layer7 timeout ...", cela est du au fait que le délais de 2500 millisecondes est plus grand que le délais de timeout, du coup au yeux du proxy, le serveur s1 est down **
+**Dans les logs docker compose on peut voir ce message dans la ligne ha: "... Server nodes/s1 is DOWN ... Layer7 timeout ...", cela est du au fait que le délais de 2500 millisecondes est plus grand que le délais de timeout, du coup au yeux du proxy, le serveur s1 est down (ce qui explique pourquoi il n'était jamais atteints dans la partie précédente).**
 
 ![4.4](./captures/4-4.png)
 
 5. Update the HAProxy configuration to add a weight to your nodes. For that, add `weight [1-256]` where the value of weight is between the two values (inclusive). Set `s1` to 2 and `s2` to 1. Redo a run with 250ms delay.
+
+**10 utilisateurs avec 100 loops pour gagner du temps (et avoir des chiffres qui se lisent facilement en pour mille), d'abord sans les 250 ms de delay sur S1, On peut voir que dans la répartition est différente: au lieu de la répartitions 50/50 comme dans la partie 4.2 (1000-1000) on a soit : 300-700 ou 600-400 (avoir exactement 333-666 est impossible avec 10 utilisateurs (10 mod 3 n'est pas 0))**
+
+![4.5](./captures/4-5.png)
+
+![4.5.2](./captures/4-5-2.png)
+
+**Avec le delay de 250 ms sur S1, l’exemple du dessous est la seule fois ou il a survécu. (je n'ai jamais pu voir l'autre resultat (300-700)).**
+
+![4.51-2](./captures/4-51-2.png)
+
+**Avec 250 ms de delay un poids de 2 sur S1 et 10, il a tendance a faire un timeout ce qui donne le résultat suivant. La conséquence est que tout est redirigé sur S2 ce qui donne des résultats qui ne s'approche pas du tout des poids 1 pour 2 (33-66) (logique comme S1 est considéré down)**
+
+![4.51.error](./captures/4-51-error.png)
+
+![4.51](./captures/4-51.png)
+
+
 6. Now, what happened when the cookies are cleared between each requests and the delay is set to 250ms ? We expect just one or two sentence to summarize your observations of the behavior with/without cookies.
+
+**Malheureusement je ne peux pas faire cette partie avec 10 users comme j'ai systématiquement un timeout, même si au lieu de 100 itérations j'en fait seulement 10.**
+
+![4.6](./captures/4-6.png)
+
+![4.6.error](./captures/4-6-error.png)
+
+**par contre avec 2 utilisateurs et 500 loops (pour avoir des pour mille) j'obtiens ça (333-667) (au lieu de 500-500) cela est du au fait que comme les cookies sont effacé à chaque tentative c'est comme si nos 2 users sont en fait 1000 users comme le cookie est leur mémoire et du coup oublie a chaque fois quel serveur leur avait été assigné **
+
+![4.6.succ](./captures/4-6-succ.png)
+
 
 ### Tâche 5(tout le monde)
 
@@ -281,7 +312,7 @@ leastconn   The server with the lowest number of connections receives the
 
   **Configuration de HAProxy**
 
-  On configure la stratégie d'ordonnancement dans ``backend``.
+  On configure la stratégie d'ordonnancement dans ``backend``.meme
 
   ```
   balance leastconn
