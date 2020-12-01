@@ -178,14 +178,27 @@ Hypertext Transfer Protocol
 
 1. Be sure the delay is of 0 milliseconds is set on `s1`. Do a run to have base data to compare with the next experiments.
 
+![4.1](./captures/4-1.png)
+
 2. Set a delay of 250 milliseconds on `s1`. Relaunch a run with the JMeter script and explain what it is happening?
+
+**TODO**
+
+![4.2](./captures/4-2.png)
 
 3. Set a delay of 2500 milliseconds on `s1`. Same than previous step.
 
+**On peut voir que le S1 n'est même pas affiché**
+
+![4.3](./captures/4-3.png)
+
 4. In the two previous steps, are there any error? Why?
 
-5. Update the HAProxy configuration to add a weight to your nodes. For that, add `weight [1-256]` where the value of weight is between the two values (inclusive). Set `s1` to 2 and `s2` to 1. Redo a run with 250ms delay.
+**dans les logs docker compose on peut voir ce message dans la ligne ha: "... Server nodes/s1 is DOWN ... Layer7 timeout ...", cela est du au fait que le délais de 2500 millisecondes est plus grand que le délais de timeout, du coup au yeux du proxy, le serveur s1 est down **
 
+![4.4](./captures/4-4.png)
+
+5. Update the HAProxy configuration to add a weight to your nodes. For that, add `weight [1-256]` where the value of weight is between the two values (inclusive). Set `s1` to 2 and `s2` to 1. Redo a run with 250ms delay.
 6. Now, what happened when the cookies are cleared between each requests and the delay is set to 250ms ? We expect just one or two sentence to summarize your observations of the behavior with/without cookies.
 
 ### Tâche 5(tout le monde)
