@@ -38,9 +38,9 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
 
     **Réponse**
 
-  **On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.**
+    **On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.**
 
-  ![](assets/img/graph-req1.jpg)
+    ![](assets/img/graph-req1.jpg)
 
 4. Provide a screenshot of the summary report from JMeter.
 
@@ -105,7 +105,7 @@ backend node
 
 **Lorsque nous faisons une requête et plusieurs ``refresh`` nous observons que le load Balancer nous renvoie sur le même serveur.**
 
-**Capture wireshark**
+**Aperçu d'une capture sur Wireshark**
 
 ```
 Hypertext Transfer Protocol
@@ -190,11 +190,91 @@ Hypertext Transfer Protocol
 
 ### Tâche 5(tout le monde)
 
+In this part of the lab, you will be less guided and you will have more opportunity to play and discover HAProxy. The main goal of this part is to play with various strategies and compare them together.
+
+We propose that you take the time to discover the different strategies in HAProxy documentation and then pick two of them (can be round-robin but will be better to chose two others). Once you have chosen your strategies, you have to play with them (change configuration, use Jmeter script, do some experiments).
+
 **Deliverables:**
 
 1. Briefly explain the strategies you have chosen and why you have chosen them.
 
+**Nous avons choisi les algorithm suivant pour afin de tester le Load-Balancer, cela nous permettra de comparer ces différentes stratégie avec Round-Robin**
+
+**Stratégie choisi**
+- first
+- leastconn
+
+```
+source      The source IP address is hashed and divided by the total
+            weight of the running servers to designate which server will
+            receive the request. This ensures that the same client IP
+            address will always reach the same server as long as no
+            server goes down or up. If the hash result changes due to the
+            number of running servers changing, many clients will be
+            directed to a different server. This algorithm is generally
+            used in TCP mode where no cookie may be inserted. It may also
+            be used on the Internet to provide a best-effort stickiness
+            to clients which refuse session cookies. This algorithm is
+            static by default, which means that changing a server's
+            weight on the fly will have no effect, but this can be
+            changed using "hash-type".
+
+
+leastconn   The server with the lowest number of connections receives the
+            connection. Round-robin is performed within groups of servers
+            of the same load to ensure that all servers will be used. Use
+            of this algorithm is recommended where very long sessions are
+            expected, such as LDAP, SQL, TSE, etc... but is not very well
+            suited for protocols using short sessions such as HTTP. This
+            algorithm is dynamic, which means that server weights may be
+            adjusted on the fly for slow starts for instance.
+```
+
+
 2. Provide evidences that you have played with the two strategies (configuration done, screenshots, ...)
+
+  * Source
+
+  La stratégie de load balancing *Source* utilise l'address ip source et le poid des serveurs cible pour déterminer vers quels application un client devra être renvoyé.
+
+  **Configuration de HAProxy**
+
+  On configure la stratégie d'ordonnancement dans ``backend`` et on définie le nombres de connexions maximal.
+
+  ```
+  balance source
+
+  server s1 ${WEBAPP_1_IP}:3000 weight 20
+  server s2 ${WEBAPP_2_IP}:3000 weight 10
+  ```
+
+  **Démonstration du fonctionnement avec Jmeter**
+
+  **Capture avec les poids de base**
+  ![](./captures/5.2-1.png)
+
+  **Capture avec s2 prioritaire**
+
+  Modifions le serveur s2 avec un poid plus important
+
+  ```
+  server s2 ${WEBAPP_2_IP}:3000 weight 30
+  ```
+  ![](./captures/5.2-2.png)
+
+  * leastconn
+
+  La stratégie d'ordonnancement *lestconn* prend comme paramètre le nombre de connections établis avec les serveur et va diriger les reqêtes vers le serveur le moins chargé.
+
+  **Configuration de HAProxy**
+
+  On configure la stratégie d'ordonnancement dans ``backend``.
+
+  ```
+  balance leastconn
+  ```
+
+  **Démonstration du fonctionnement avec Jmeter**
 
 3. Compare the both strategies and conclude which is the best for this lab (not necessary the best at all).
 
