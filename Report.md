@@ -28,7 +28,7 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
     **Pour une bonne gestion des sessions l'on s'attend à ce le load Balancer route les requêtes aux serveur en fonction d'un cookie de sessions**
 
 3. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2.
-    
+   
     **Réponse**
     
     **On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.**
@@ -282,7 +282,7 @@ We propose that you take the time to discover the different strategies in HAProx
 
 ##### Stratégie Source
 
-  La stratégie (statique) de load balancing *Source* utilise l'address ip source et le poid des serveurs cible pour déterminer vers quels application un client devra être renvoyée.
+  La stratégie (statique) de load balancing *Source* utilise l'address ip source et le poids des serveurs cible pour déterminer vers quels application un client devra être renvoyée.
 
   **Configuration de HAProxy**
 
@@ -302,7 +302,7 @@ We propose that you take the time to discover the different strategies in HAProx
 
   **Capture avec s2 prioritaire**
 
-  Modifions le serveur s2 avec un poid plus important
+  Modifions le serveur s2 avec un poids plus important
 
   ```
   server s2 ${WEBAPP_2_IP}:3000 weight 30
@@ -322,7 +322,7 @@ We propose that you take the time to discover the different strategies in HAProx
   ```
 
   **Démonstration du fonctionnement avec Jmeter**
-  Pour tester la configuration nous allons introduire un délai de traitement entre les deux serveur ce qui forcera la stratégie à diriger les requêtes vers le serveurs avec le moins de delai (qui aura le moins de connexion en cours).
+  Pour tester la configuration nous allons introduire un délai de traitement entre les deux serveur ce qui forcera la stratégie à diriger les requêtes vers le serveurs avec le moins de délai (qui aura le moins de connexion en cours).
 
 ```bash
 curl -H "Content-Type: application/json" -X POST -d '{"delay": 300}' http://192.168.42.11:3000/delay
@@ -336,8 +336,8 @@ On observe ainsi que lors du test de charge on se retrouve avec le serveur s2 pr
 
   3. Compare the both strategies and conclude which is the best for this lab (not necessary the best at all).
 
-Pour notre laboratoire il se trouve que chacune des stratégies n'est pas parfaitement adapté à notre situation, *Source* étant adapté pour des session sans cookie et *leastconn* n'est pas recommandé pour les session courtes comme HTTP, cependant comme il nous faut choisir nous allons préférer *leastconn* car il s'agit d'un algorithme dynamique (qui peut adapter les poids des noeuds)
+Pour notre laboratoire il se trouve que chacune des stratégies n'est pas parfaitement adapté à notre situation, *Source* étant adapté pour des session sans cookie et *leastconn* n'est pas recommandé pour les session courtes comme HTTP, cependant comme il nous faut choisir nous allons préférer *leastconn* car il s'agit d'un algorithme dynamique (qui peut adapter les poids des nœuds)
 
 ### Conclusion
 
-Dans ce laboratoire nous avons pu découvrir et expérimenter le fonctionnement du LoadBalancer HAproxy, nous avons pu observer comment les session sont gérée au travers des cookies, et comment est répartie la charge util en fonction des stratégie d'ordonancement.
+Dans ce laboratoire nous avons pu découvrir et expérimenter le fonctionnement du LoadBalancer HAproxy, nous avons pu observer comment les session sont gérée au travers des cookies, et comment est répartie la charge utile en fonction des stratégie d’ordonnancement.
