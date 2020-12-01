@@ -28,9 +28,9 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
     **Pour une bonne gestion des sessions l'on s'attend à ce le load Balancer route les requêtes aux serveur en fonction d'un cookie de sessions**
 
 3. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2.
-   
+
     **Réponse**
-    
+
     **On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.**
 
     ![](assets/img/graph-req1.jpg)
@@ -148,12 +148,14 @@ Hypertext Transfer Protocol
 ### Tâche 3
 
 1. Take a screenshot of the Step 5 and tell us which node is answering.
+  **In the screen we can see that onyl s2 is answering**
+  ![](./captures/3.1.png)
 
 2. Based on your previous answer, set the node in DRAIN mode. Take a screenshot of the HAProxy state page.
 
 **Answer**
 
-![](captures/3-1.png)
+![](captures/3.2.png)
 
 3. Refresh your browser and explain what is happening. Tell us if you stay on the same node or not. If yes, why? If no, why?
 
