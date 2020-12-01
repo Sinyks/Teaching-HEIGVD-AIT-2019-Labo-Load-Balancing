@@ -12,7 +12,7 @@ Moïn Danai
 
 Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balancer`` HAproxy. Ce rapport découpe les livrables dans les plusieurs tâches.
 
-### Tâche 1(tout le monde)
+### Tâche 1
 
 1. Explain how the load balancer behaves when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.
 
@@ -59,7 +59,7 @@ ha         | [WARNING] 329/152730 (10) : Server nodes/s1 is DOWN, reason: Layer4
 
 ![](assets/img/graph-req2.jpg)
 
-### Tâche 2(Sacha)
+### Tâche 2
 
 1. There is different way to implement the sticky session. One possibility is to use the SERVERID provided by HAProxy. Another way is to use the NODESESSID provided by the application. Briefly explain the difference between both approaches (provide a sequence diagram with cookies to show the difference).
 
@@ -145,7 +145,7 @@ Hypertext Transfer Protocol
 
 ![](./captures/2.7.png)
 
-### Tâche 3(Moïn)
+### Tâche 3
 
 1. Take a screenshot of the Step 5 and tell us which node is answering.
 
@@ -202,7 +202,7 @@ We now get responses from both nodes in a round-robin fashion, as before.
 
 As for step 4, we only get responses from s1 with variable `id`.
 
-### Tâche 4(Alban)
+### Tâche 4
 
 *Remark*: Make sure you have the cookies are kept between two requests.
 
@@ -262,7 +262,7 @@ As for step 4, we only get responses from s1 with variable `id`.
 ![4.6.succ](./captures/4-6-succ.png)
 
 
-### Tâche 5(tout le monde)
+### Tâche 5
 
 In this part of the lab, you will be less guided and you will have more opportunity to play and discover HAProxy. The main goal of this part is to play with various strategies and compare them together.
 
