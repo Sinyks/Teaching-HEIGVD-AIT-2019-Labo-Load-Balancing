@@ -46,7 +46,6 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
 
 ![](captures/summary_report.png)
 
-
 5. Run the following command:
 
   ```bash
@@ -236,7 +235,7 @@ As for step 4, we only get responses from s1 with variable `id`.
 
 4. In the two previous steps, are there any error? Why?
 
-**Dans les logs docker compose on peut voir ce message dans la ligne ha: "... Server nodes/s1 is DOWN ... Layer7 timeout ...", cela est du au fait que le délais de 2500 millisecondes est plus grand que le délais de timeout, du coup au yeux du proxy, le serveur s1 est down (ce qui explique pourquoi il n'était jamais atteints dans la partie précédente).**
+**dans les logs docker compose on peut voir ce message dans la ligne ha: "... Server nodes/s1 is DOWN ... Layer7 timeout ...", cela est du au fait que le délais de 2500 millisecondes est plus grand que le délais de timeout, du coup au yeux du proxy, le serveur s1 est down**
 
 ![4.4](./captures/4-4.png)
 
@@ -319,7 +318,7 @@ leastconn   The server with the lowest number of connections receives the
 
   * Source
 
-  La stratégie de load balancing *Source* utilise l'address ip source et le poid des serveurs cible pour déterminer vers quels application un client devra être renvoyé.
+  La stratégie (statique) de load balancing *Source* utilise l'address ip source et le poid des serveurs cible pour déterminer vers quels application un client devra être renvoyée.
 
   **Configuration de HAProxy**
 
@@ -328,8 +327,8 @@ leastconn   The server with the lowest number of connections receives the
   ```
   balance source
 
-  server s1 ${WEBAPP_1_IP}:3000 weight 20
-  server s2 ${WEBAPP_2_IP}:3000 weight 10
+  server s1 ${WEBAPP_1_IP}:3000
+  server s2 ${WEBAPP_2_IP}:3000
   ```
 
   **Démonstration du fonctionnement avec Jmeter**
@@ -348,7 +347,7 @@ leastconn   The server with the lowest number of connections receives the
 
   * leastconn
 
-  La stratégie d'ordonnancement *lestconn* prend comme paramètre le nombre de connections établis avec les serveur et va diriger les reqêtes vers le serveur le moins chargé.
+  La stratégie d'ordonnancement *lestconn* prend comme paramètre le nombre de connections établis avec les serveur et va diriger les requêtes vers le serveur le moins chargé.
 
   **Configuration de HAProxy**
 
@@ -359,10 +358,23 @@ leastconn   The server with the lowest number of connections receives the
   ```
 
   **Démonstration du fonctionnement avec Jmeter**
+  Pour tester la configuration nous allons introduire un délai de traitement entre les deux serveur ce qui forcera la stratégie à diriger les requêtes vers le serveurs avec le moins de delai (qui aura le moins de connexion en cours).
 
-3. Compare the both strategies and conclude which is the best for this lab (not necessary the best at all).
+```bash
+curl -H "Content-Type: application/json" -X POST -d '{"delay": 300}' http://192.168.42.11:3000/delay
+
+curl -H "Content-Type: application/json" -X POST -d '{"delay": 30}' http://192.168.42.22:3000/delay
+```
+
+On observe ainsi que lors du test de charge on se retrouve avec le serveur s2 priorisé, car il possède un meilleur *throughput*.
+
+![](./captures/5.2-3.png)
+
+  3. Compare the both strategies and conclude which is the best for this lab (not necessary the best at all).
+
+  Pour notre laboratoire il se trouve que chacune des stratégies n'est pas parfaitement adapté à notre situation, *Source* étant adapté pour des session sans cookie et *leastconn* n'est pas recommandé pour les session courtes comme HTTP, cependant comme il nous faut choisir nous allons préférer *leastconn* car il s'agit d'un algorithme dynamique (qui peut adapter les poids des noeuds)
 
 
-### Conclusion
+### Conclusion  
 
 ## Annexes
