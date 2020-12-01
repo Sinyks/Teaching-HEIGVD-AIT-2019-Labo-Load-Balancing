@@ -14,10 +14,7 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
 
 ### Tâche 1(tout le monde)
 
-1. Explain how the load balancer behaves when you open and refresh the
-    URL <http://192.168.42.42> in your browser. Add screenshots to
-    complement your explanations. We expect that you take a deeper a
-    look at session management.
+1. Explain how the load balancer behaves when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.
 
   **Réponse:**
 
@@ -30,14 +27,10 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
 
     **Pour une bonne gestion des sessions l'on s'attend à ce le load Balancer route les requêtes aux serveur en fonction d'un cookie de sessions**
 
-3. Provide a sequence diagram to explain what is happening when one
-    requests the URL for the first time and then refreshes the page. We
-    want to see what is happening with the cookie. We want to see the
-    sequence of messages exchanged (1) between the browser and HAProxy
-    and (2) between HAProxy and the nodes S1 and S2.
-
+3. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2.
+    
     **Réponse**
-
+    
     **On the flowchart below, we can see how HAProxy injects two headers that pertain to the proper identification of client requests being proxied. As the backend mode is round-robin, every request is sent to S1 while every other request is sent to S2.**
 
     ![](assets/img/graph-req1.jpg)
@@ -52,9 +45,7 @@ Dans ce laboratoire nous allons explorer les fonctionnalitées du ``Load Balance
   $ docker stop s1
   ```
 
-  Clear the results in JMeter and re-run the test plan. Explain what
-  is happening when only one node remains active. Provide another
-  sequence diagram using the same model as the previous one.
+ Clear the results in JMeter and re-run the test plan. Explain what is happening when only one node remains active. Provide another sequence diagram using the same model as the previous one.
 
 ![](captures/summary_report_s2.png)
 
@@ -284,39 +275,12 @@ We propose that you take the time to discover the different strategies in HAProx
 **Nous avons choisi les algorithm suivant pour afin de tester le Load-Balancer, cela nous permettra de comparer ces différentes stratégie avec Round-Robin**
 
 **Stratégie choisi**
-- first
-- leastconn
-
-```
-source      The source IP address is hashed and divided by the total
-            weight of the running servers to designate which server will
-            receive the request. This ensures that the same client IP
-            address will always reach the same server as long as no
-            server goes down or up. If the hash result changes due to the
-            number of running servers changing, many clients will be
-            directed to a different server. This algorithm is generally
-            used in TCP mode where no cookie may be inserted. It may also
-            be used on the Internet to provide a best-effort stickiness
-            to clients which refuse session cookies. This algorithm is
-            static by default, which means that changing a server's
-            weight on the fly will have no effect, but this can be
-            changed using "hash-type".
-
-
-leastconn   The server with the lowest number of connections receives the
-            connection. Round-robin is performed within groups of servers
-            of the same load to ensure that all servers will be used. Use
-            of this algorithm is recommended where very long sessions are
-            expected, such as LDAP, SQL, TSE, etc... but is not very well
-            suited for protocols using short sessions such as HTTP. This
-            algorithm is dynamic, which means that server weights may be
-            adjusted on the fly for slow starts for instance.
-```
-
+- Source : Car il s'agit d'un stratégie statique sans cookie
+- Leastconn : Car il s'agit d'un stratégie statique
 
 2. Provide evidences that you have played with the two strategies (configuration done, screenshots, ...)
 
-  * Source
+##### Stratégie Source
 
   La stratégie (statique) de load balancing *Source* utilise l'address ip source et le poid des serveurs cible pour déterminer vers quels application un client devra être renvoyée.
 
@@ -345,7 +309,7 @@ leastconn   The server with the lowest number of connections receives the
   ```
   ![](./captures/5.2-2.png)
 
-  * leastconn
+##### Stratégie leastconn
 
   La stratégie d'ordonnancement *lestconn* prend comme paramètre le nombre de connections établis avec les serveur et va diriger les requêtes vers le serveur le moins chargé.
 
@@ -372,9 +336,8 @@ On observe ainsi que lors du test de charge on se retrouve avec le serveur s2 pr
 
   3. Compare the both strategies and conclude which is the best for this lab (not necessary the best at all).
 
-  Pour notre laboratoire il se trouve que chacune des stratégies n'est pas parfaitement adapté à notre situation, *Source* étant adapté pour des session sans cookie et *leastconn* n'est pas recommandé pour les session courtes comme HTTP, cependant comme il nous faut choisir nous allons préférer *leastconn* car il s'agit d'un algorithme dynamique (qui peut adapter les poids des noeuds)
+Pour notre laboratoire il se trouve que chacune des stratégies n'est pas parfaitement adapté à notre situation, *Source* étant adapté pour des session sans cookie et *leastconn* n'est pas recommandé pour les session courtes comme HTTP, cependant comme il nous faut choisir nous allons préférer *leastconn* car il s'agit d'un algorithme dynamique (qui peut adapter les poids des noeuds)
 
+### Conclusion
 
-### Conclusion  
-
-## Annexes
+Dans ce laboratoire nous avons pu découvrir et expérimenter le fonctionnement du LoadBalancer HAproxy, nous avons pu observer comment les session sont gérée au travers des cookies, et comment est répartie la charge util en fonction des stratégie d'ordonancement.
