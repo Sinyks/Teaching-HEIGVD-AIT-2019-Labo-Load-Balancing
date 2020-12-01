@@ -161,16 +161,56 @@ Hypertext Transfer Protocol
 
 2. Based on your previous answer, set the node in DRAIN mode. Take a screenshot of the HAProxy state page.
 
+**Answer**
+
+![](captures/3-1.png)
+
 3. Refresh your browser and explain what is happening. Tell us if you stay on the same node or not. If yes, why? If no, why?
+
+**Answer**
+
+No, we are now getting replies from s1 only since s2 is being drain of requests and slowly set aside (i.e. not getting requests anymore, out of commission).
 
 4. Open another browser and open `http://192.168.42.42`. What is happening?
 
+**Answer**
+
+We get the following:
+
+```
+{
+  "hello":"world!",
+  "ip":"192.168.42.11",
+  "host":"0a228300f282",
+  "tag":"s1",
+  "sessionViews":11,
+  "id":"1t-Yg2rLj4TQWpQyXFRTudDq4NFtbrBx"
+}
+```
+
+upon each page refresh, except the `id` which changes each time.
+
 5. Clear the cookies on the new browser and repeat these two steps multiple times. What is happening? Are you reaching the node in DRAIN mode?
+
+**Answer**
+
+Still not, no. We always get a similar response (variable `id`).
 
 6. Reset the node in READY mode. Repeat the three previous steps and explain what is happening. Provide a screenshot of HAProxy\'s stats page.
 
+**Answer**
+
+We now get responses from both nodes in a round-robin fashion, as before.
+
+![](captures/3-6.png)
+
 7. Finally, set the node in MAINT mode. Redo the three same steps and explain what is happening. Provide a screenshot of HAProxy\'s stats page.
 
+**Answer**
+
+![](captures/3-7.png)
+
+As for step 4, we only get responses from s1 with variable `id`.
 
 ### Tâche 4(Alban)
 
